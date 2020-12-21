@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        ul#nav {
+            list-style-type: none;
+            margin: 0;
+            overflow: hidden;
+            background-color: #333333;
+        }
+
+        ul#nav li {
+            float: left;
+        }
+
+        ul#nav li a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 16px;
+            text-decoration: none;
+        }
+
+        ul#nav li a:hover {
+            background-color: #111111;
+        }
+
+        div {
+            margin-top: 10px;
+        }
+
+        table {
+            margin-top: 20px;
+        }
+
+        #errorMessage {
+            color: red;
+            font-weight: bold;
+            font-size: 1.3em;
+        }
+    </style>
+    <title>WP Exam</title>
+</head>
+<body>
+
+<div>
+    <ul id="nav">
+        <li><a href="/">Home</a></li>
+        <li><a href="/login">Login</a></li>
+        <li><a href="#">[authenticatedUser.username]</a></li>
+        <li><a href="/logout">Logout</a></li>
+    </ul>
+</div>
+<div id="errorMessage">
+    [error message]
+</div>
+<div>
+    <!-- The form below should invoke the method ProductsController.showProducts -->
+    <form id="filter-form">
+
+        <label for="nameSearch"></label>
+        <input id="nameSearch" type="text" name=""/>
+        <label for="categoryId"></label>
+        <select id="categoryId" name="">
+            <option value="">All</option>
+            <!-- for each category add one <option> element-->
+        </select>
+        <button id="fitler" type="submit">Filter</button>
+    </form>
+    <div>
+        <!-- ProductsController.showAdd -->
+        <a href="" class="add-item">
+            Add new product
+        </a>
+    </div>
+    <table>
+        <tr>
+            <th>Product name</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Categories</th>
+            <th>Creator</th>
+            <th>Actions</th>
+        </tr>
+        <!-- For each product you should have one <tr> like below -->
+        <tr class="item">
+            <td>[prod.name]</td>
+            <td>[prod.price]</td>
+            <td>[prod.quantity]</td>
+            <td>
+                <ul>
+                    <!-- For each product's category you should display one <li> element like the one below -->
+                    <li>[cat.name]</li>
+                </ul>
+            </td>
+            <td>[prod.creator]</td>
+            <td>
+                <form>
+                    <!-- ProductsController.delete -->
+                    <button type="submit" class="delete-item">Delete</button>
+                </form>
+                <!-- ProductsController.showEdit -->
+                <a href="" class="edit-item">Edit</a>
+            </td>
+        </tr>
+    </table>
+
+</div>
+</body>
+</html>
