@@ -1,12 +1,17 @@
-package mk.ukim.finki.wp.exam.example.selenium;
+package mk.ukim.finki.wp.exam.example;
 
 import mk.ukim.finki.wp.exam.example.model.Category;
 import mk.ukim.finki.wp.exam.example.model.Product;
 import mk.ukim.finki.wp.exam.example.model.Role;
+import mk.ukim.finki.wp.exam.example.selenium.AbstractPage;
+import mk.ukim.finki.wp.exam.example.selenium.AddOrEditProduct;
+import mk.ukim.finki.wp.exam.example.selenium.ItemsPage;
+import mk.ukim.finki.wp.exam.example.selenium.LoginPage;
 import mk.ukim.finki.wp.exam.example.service.CategoryService;
 import mk.ukim.finki.wp.exam.example.service.ProductService;
 import mk.ukim.finki.wp.exam.example.service.UserService;
-import org.junit.Assert;
+import mk.ukim.finki.wp.exam.util.ExamAssert;
+import mk.ukim.finki.wp.exam.util.SubmissionHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,6 +25,12 @@ import java.util.List;
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class SeleniumScenarioTest {
+
+    static {
+        SubmissionHelper.session = "2020-kol2";
+        SubmissionHelper.index = "TODO: enter your index";
+    }
+
 
     public static final String PRODUCTS_URL = "/products";
     public static final String PRODUCTS_ADD_URL = "/products/add";
@@ -95,15 +106,13 @@ public class SeleniumScenarioTest {
 
         productsPage = AddOrEditProduct.update(this.driver, productsPage.getEditButtons().get(itemNum), "test1", "200", "4", productCategories);
         AbstractPage.assertRelativeUrl(this.driver, PRODUCTS_URL);
-        Assert.assertEquals("The updated product name is not as expected.", "test1", productsPage.getProductRows().get(itemNum).getText().trim());
+        ExamAssert.assertEquals("The updated product name is not as expected.", "test1", productsPage.getProductRows().get(itemNum).getText().trim());
         productsPage.assertElemts(itemNum + 1, itemNum + 1, itemNum + 1, 1);
 
 
         productsPage.getDeleteButtons().get(itemNum).click();
         AbstractPage.assertRelativeUrl(this.driver, PRODUCTS_URL);
         productsPage.assertElemts(itemNum, itemNum, itemNum, 1);
-
-
     }
 
 
@@ -146,7 +155,7 @@ public class SeleniumScenarioTest {
 
         productsPage = AddOrEditProduct.update(this.driver, productsPage.getEditButtons().get(itemNum), "test1", "200", "4", productCategories);
         AbstractPage.assertRelativeUrl(this.driver, PRODUCTS_URL);
-        Assert.assertEquals("The updated product name is not as expected.", "test1", productsPage.getProductRows().get(itemNum).getText().trim());
+        ExamAssert.assertEquals("The updated product name is not as expected.", "test1", productsPage.getProductRows().get(itemNum).getText().trim());
         productsPage.assertElemts(itemNum + 1, itemNum + 1, itemNum + 1, 1);
 
         productsPage.getDeleteButtons().get(itemNum).click();

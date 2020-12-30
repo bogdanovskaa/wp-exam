@@ -20,7 +20,7 @@ public class AddOrEditProduct extends AbstractPage {
 
     public static ItemsPage add(WebDriver driver, String addPath, String name, String price, String quantity, String[] categories) {
         get(driver, addPath);
-        assertRelativeUrl(driver, addPath);
+        AbstractPage.assertRelativeUrl(driver, addPath);
         AddOrEditProduct addOrEditProduct = PageFactory.initElements(driver, AddOrEditProduct.class);
         addOrEditProduct.name.sendKeys(name);
         addOrEditProduct.price.sendKeys(price);

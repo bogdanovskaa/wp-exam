@@ -49,7 +49,7 @@
   
    
 ##Тестирање
-Во `mk.ukim.finki.wp.exam.example.selenium.SeleniumScenarioTest` се имплементирани 2 теста: 
+Во `mk.ukim.finki.wp.exam.example.SeleniumScenarioTest` се имплементирани 2 теста: 
 - `testScenarioNoSecurity` кое треба да го повиката доколку не го имплементирате барањето за Spring Security
 - `testSecurityScenario` кое треба да го повикате доколку го имплементирате барањето за Spring Security
 

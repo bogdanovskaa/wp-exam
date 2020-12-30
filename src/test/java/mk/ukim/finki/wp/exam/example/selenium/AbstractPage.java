@@ -1,7 +1,7 @@
 package mk.ukim.finki.wp.exam.example.selenium;
 
 import lombok.Getter;
-import org.junit.Assert;
+import mk.ukim.finki.wp.exam.util.ExamAssert;
 import org.openqa.selenium.WebDriver;
 
 @Getter
@@ -18,10 +18,10 @@ public class AbstractPage {
         driver.get(url);
     }
 
-    static void assertRelativeUrl(WebDriver driver, String relativeUrl) {
+    public static void assertRelativeUrl(WebDriver driver, String relativeUrl) {
         String url = System.getProperty("geb.build.baseUrl", "http://localhost:9999") + relativeUrl;
         String current = driver.getCurrentUrl();
-        Assert.assertEquals("Current url is not " + relativeUrl, url, current);
+        ExamAssert.assertEquals("Current url is not " + relativeUrl, url, current);
     }
 
 }

@@ -1,7 +1,7 @@
 package mk.ukim.finki.wp.exam.example.selenium;
 
 import lombok.Getter;
-import org.junit.Assert;
+import mk.ukim.finki.wp.exam.util.ExamAssert;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -37,9 +37,9 @@ public class ItemsPage extends AbstractPage {
     }
 
     public void assertElemts(int productsNumber, int deleteButtons, int editButtons, int addButtons) {
-        Assert.assertEquals("Item's rows do not match", productsNumber, this.getProductRows().size());
-        Assert.assertEquals("Delete do not match", deleteButtons, this.getDeleteButtons().size());
-        Assert.assertEquals("Edit do not match", editButtons, this.getEditButtons().size());
-        Assert.assertEquals("Add is visible", addButtons, this.getAddProductButton().size());
+        ExamAssert.assertEquals("Item's rows do not match", productsNumber, this.getProductRows().size());
+        ExamAssert.assertEquals("Delete do not match", deleteButtons, this.getDeleteButtons().size());
+        ExamAssert.assertEquals("Edit do not match", editButtons, this.getEditButtons().size());
+        ExamAssert.assertEquals("Add is visible", addButtons, this.getAddProductButton().size());
     }
 }
