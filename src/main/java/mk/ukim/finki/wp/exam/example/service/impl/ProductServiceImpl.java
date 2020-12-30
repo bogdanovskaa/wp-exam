@@ -1,2 +1,4 @@
-package mk.ukim.finki.wp.exam.example.service.impl;public class ProductServiceImpl {
+package mk.ukim.finki.wp.exam.example.service.impl;
+
+public class ProductServiceImpl {
 }

@@ -24,4 +24,10 @@ public class AbstractPage {
         ExamAssert.assertEquals("Current url is not " + relativeUrl, url, current);
     }
 
+    public static void assertAbsoluteUrl(WebDriver driver, String url) {
+
+        String current = driver.getCurrentUrl();
+        ExamAssert.assertEquals("Current url is not " + url, url, current);
+    }
+
 }

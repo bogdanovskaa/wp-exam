@@ -1,58 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <style>
-        ul#nav {
-            list-style-type: none;
-            margin: 0;
-            overflow: hidden;
-            background-color: #333333;
-        }
-
-        ul#nav li {
-            float: left;
-        }
-
-        ul#nav li a {
-            display: block;
-            color: white;
-            text-align: center;
-            padding: 16px;
-            text-decoration: none;
-        }
-
-        ul#nav li a:hover {
-            background-color: #111111;
-        }
-
-        div {
-            margin-top: 10px;
-        }
-
-        table {
-            margin-top: 20px;
-        }
-
-        #errorMessage {
-            color: red;
-            font-weight: bold;
-            font-size: 1.3em;
-        }
-    </style>
     <title>WP Exam</title>
 </head>
 <body>
-<div>
-    <ul id="nav">
-        <li><a href="/">Home</a></li>
-        <li><a href="/login">Login</a></li>
-        <li><a href="#">[authenticatedUser.username]</a></li>
-        <li><a href="/logout">Logout</a></li>
-    </ul>
-</div>
-<div id="errorMessage">
-    [error message]
-</div>
 <!-- The form should submit to ProductsController.create or  ProductsController.update, depending on whether we are
 creating or editing a product -->
 <form>
@@ -77,14 +28,23 @@ creating or editing a product -->
     </div>
     <div>
         <label>Category</label><br/>
-        <!-- For each category you should have one <div> like below  -->
-        <div>
-            <input type="checkbox" id="c_[cat.id]" name="" value="[cat.id]"/><label for="c_[cat.id]">[cat.name]</label>
-        </div>
+        <select id="categories" name="categories" multiple="multiple" size="5">
+            <!-- For each category you should have one <option> like below  -->
+            <option value="[cat.ID]"> [cat.name]</option>
+        </select>
     </div>
 
     <button id="submit" type="submit">Submit</button>
-    <a id="back" href="" type="button" class="btn btn-primary">Back</a>
+    <a id="back" href="/products" type="button" class="btn btn-primary">Back to products</a>
 </form>
+
+<div>
+    <ul id="nav">
+        <li><a href="/">Home</a></li>
+        <li><a href="/login">Login</a></li>
+        <li><a href="/logout">Logout</a></li>
+    </ul>
+</div>
+
 </body>
 </html>

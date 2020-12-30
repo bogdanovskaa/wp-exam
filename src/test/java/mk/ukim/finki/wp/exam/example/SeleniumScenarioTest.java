@@ -15,6 +15,7 @@ import mk.ukim.finki.wp.exam.util.SubmissionHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.By;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,7 +29,7 @@ public class SeleniumScenarioTest {
 
     static {
         SubmissionHelper.session = "2020-kol2";
-        SubmissionHelper.index = "TODO: enter your index";
+        SubmissionHelper.index = "201234";
     }
 
 
@@ -77,6 +78,13 @@ public class SeleniumScenarioTest {
     }
 
     @Test
+    public void testServiceSearch() {
+        ExamAssert.assertEquals("by name and category null", 2, this.productService.listProductsByNameAndCategory("uct 1", null).size());
+        ExamAssert.assertEquals("by category 1L", 10, this.productService.listProductsByNameAndCategory(null, 1L).size());
+        ExamAssert.assertEquals("by name and category 1L", 2, this.productService.listProductsByNameAndCategory("uct 1", 1L).size());
+    }
+
+    @Test
     public void testScenarioNoSecurity() throws Exception {
         List<Category> categories = this.categoryService.listAll();
         List<Product> products = this.productService.listAllProducts();
@@ -106,7 +114,7 @@ public class SeleniumScenarioTest {
 
         productsPage = AddOrEditProduct.update(this.driver, productsPage.getEditButtons().get(itemNum), "test1", "200", "4", productCategories);
         AbstractPage.assertRelativeUrl(this.driver, PRODUCTS_URL);
-        ExamAssert.assertEquals("The updated product name is not as expected.", "test1", productsPage.getProductRows().get(itemNum).getText().trim());
+        ExamAssert.assertEquals("The updated product name is not as expected.", "test1", productsPage.getProductRows().get(itemNum).findElements(By.tagName("td")).get(0).getText().trim());
         productsPage.assertElemts(itemNum + 1, itemNum + 1, itemNum + 1, 1);
 
 

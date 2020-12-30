@@ -6,12 +6,12 @@ import mk.ukim.finki.wp.exam.example.service.CategoryService;
 import mk.ukim.finki.wp.exam.example.service.ProductService;
 import mk.ukim.finki.wp.exam.example.service.UserService;
 
-import java.util.ArrayList;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class DataInitializer {
 
     public static final String ADMIN = "admin";
-    public static final String USER = "user";
 
     private final UserService userService;
 
@@ -34,7 +34,7 @@ public class DataInitializer {
         }
 
         for (int i = 1; i < 11; i++) {
-            this.productService.create("Product " + i, 20.9 * i, i, new ArrayList<>(), admin);
+            this.productService.create("Product " + i, 20.9 * i, i, Stream.of(1L, i % 5L + 1).collect(Collectors.toList()));
         }
     }
 }

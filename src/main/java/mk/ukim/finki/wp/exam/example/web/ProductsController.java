@@ -35,9 +35,8 @@ public class ProductsController {
     }
 
 
-    public String create(String name, Double price, Integer quantity, List<Long> categories, Authentication authentication) {
-        User user = null;
-        this.service.create(name, price, quantity, categories, user);
+    public String create(String name, Double price, Integer quantity, List<Long> categories) {
+        this.service.create(name, price, quantity, categories);
         return "";
     }
 

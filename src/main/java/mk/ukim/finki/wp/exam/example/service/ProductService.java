@@ -22,21 +22,21 @@ public interface ProductService {
      *
      * @param id The id of the product that we want to obtain
      * @return
+     * @throws mk.ukim.finki.wp.exam.example.model.exceptions.InvalidProductIdException when there is no product with the given id
      */
-    Optional<Product> findById(Long id);
+    Product findById(Long id);
 
     /**
      * This method is used to create a new product, and save it in the database.
      *
-     * @param name       Can not be null or empty
-     * @param price      Can not be null
-     * @param quantity   Can not be null, negative or zero
-     * @param categories The list of category ids to which the product belongs. Can not be null or empty list
-     * @param creator    Can not be null
+     * @param name
+     * @param price
+     * @param quantity
+     * @param categories The list of category ids to which the product belongs.
      * @return The product that is created. The id should be generated when the product is created.
      * @throws mk.ukim.finki.wp.exam.example.model.exceptions.InvalidCategoryIdException when there is no category with the given id
      */
-    Product create(String name, Double price, Integer quantity, List<Long> categories, User creator);
+    Product create(String name, Double price, Integer quantity, List<Long> categories);
 
     /**
      * This method is used to create a new product, and save it in the database.
@@ -44,8 +44,8 @@ public interface ProductService {
      * @param id         The id of the product that is being edited
      * @param name
      * @param price
-     * @param quantity   Can not be null, negative or zero
-     * @param categories The list of category ids to which the product belongs. Can not be null or empty list
+     * @param quantity
+     * @param categories The list of category ids to which the product belongs.
      * @return The product that is updated.
      * @throws mk.ukim.finki.wp.exam.example.model.exceptions.InvalidProductIdException  when there is no product with the given id
      * @throws mk.ukim.finki.wp.exam.example.model.exceptions.InvalidCategoryIdException when there is no category with the given id
