@@ -51,10 +51,13 @@
  
    
 ## Тестирање
-Во `mk.ukim.finki.wp.exam.example.SeleniumScenarioTest` се имплементирани 4 теста: 
+Во `mk.ukim.finki.wp.exam.example.SeleniumScenarioTest` се имплементирани 5 теста: 
+- `testServiceInit` проверува дали сервисите се успешно имплементирани и дали при стартување на апликацијата е повикан
+`DataInitializer.initData()`
 - `testServiceSearch` проверува дали коректно е имплементиран методот `ProductService.listProductsByNameAndCategory`
 - `testScenarioNoSecurity` кое треба да го повиката доколку не го имплементирате барањето за Spring Security
 - `testSecurityScenario` кое треба да го повикате доколку го имплементирате барањето за Spring Security
+- `testProductsFilter` кое проверува дали филтрирањето на продуктите е имплементирано
 
 ## Поставување на решението
 Тестовите мора задолжително да ги извршите, затоа што на тој начин го испраќате вашето решение за прегледување. 

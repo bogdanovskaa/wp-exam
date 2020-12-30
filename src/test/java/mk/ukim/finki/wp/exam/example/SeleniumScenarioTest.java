@@ -78,6 +78,11 @@ public class SeleniumScenarioTest {
     }
 
     @Test
+    public void testServiceInit() {
+        ExamAssert.assertEquals("products not initialized", 10, this.productService.listAllProducts().size());
+    }
+
+    @Test
     public void testServiceSearch() {
         ExamAssert.assertEquals("by name and category null", 2, this.productService.listProductsByNameAndCategory("uct 1", null).size());
         ExamAssert.assertEquals("by category 1L", 10, this.productService.listProductsByNameAndCategory(null, 1L).size());
@@ -173,5 +178,23 @@ public class SeleniumScenarioTest {
         LoginPage.logout(this.driver);
         AbstractPage.assertRelativeUrl(this.driver, "/");
         productsPage.assertElemts(itemNum, 0, 0, 0);
+    }
+
+    @Test
+    public void testProductsFilter() throws Exception {
+        List<Category> categories = this.categoryService.listAll();
+        List<Product> products = this.productService.listAllProducts();
+
+        int itemNum = products.size();
+
+        String[] productCategories = new String[]{
+                categories.get(0).getId().toString(),
+                categories.get(categories.size() - 1).getId().toString()
+        };
+
+        ItemsPage productsPage = ItemsPage.to(this.driver);
+        AbstractPage.assertRelativeUrl(this.driver, "/");
+        productsPage = productsPage.filter("uct 1", "1");
+        ExamAssert.assertEquals("by name and category 1L", 2, productsPage.getProductRows().size());
     }
 }
