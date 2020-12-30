@@ -168,7 +168,7 @@ public class SeleniumScenarioTest {
 
         productsPage = AddOrEditProduct.update(this.driver, productsPage.getEditButtons().get(itemNum), "test1", "200", "4", productCategories);
         AbstractPage.assertRelativeUrl(this.driver, PRODUCTS_URL);
-        ExamAssert.assertEquals("The updated product name is not as expected.", "test1", productsPage.getProductRows().get(itemNum).getText().trim());
+        ExamAssert.assertEquals("The updated product name is not as expected.", "test1", productsPage.getProductRows().get(itemNum).findElements(By.tagName("td")).get(0).getText().trim());
         productsPage.assertElemts(itemNum + 1, itemNum + 1, itemNum + 1, 1);
 
         productsPage.getDeleteButtons().get(itemNum).click();

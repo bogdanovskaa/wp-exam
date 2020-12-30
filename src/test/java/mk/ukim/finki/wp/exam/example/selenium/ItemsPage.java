@@ -45,11 +45,13 @@ public class ItemsPage extends AbstractPage {
 
 
     public ItemsPage filter(String name, String categoryId) {
+        System.out.println(driver.getCurrentUrl());
         this.nameSearch.sendKeys(name);
         Select select = new Select(this.categoryId);
         select.selectByValue(categoryId);
         this.filter.click();
-        AbstractPage.assertRelativeUrl(this.driver, "?nameSearch=" + name + "&categoryId=" + categoryId);
+        String url = "/?nameSearch=" + name + "&categoryId=" + categoryId;
+        AbstractPage.assertRelativeUrl(this.driver, url.replaceAll(" ", "+"));
         return PageFactory.initElements(driver, ItemsPage.class);
     }
 
