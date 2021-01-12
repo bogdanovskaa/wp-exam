@@ -1,5 +1,6 @@
 package mk.ukim.finki.wp.exam.example;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import mk.ukim.finki.wp.exam.example.model.Category;
 import mk.ukim.finki.wp.exam.example.model.Product;
 import mk.ukim.finki.wp.exam.example.model.Role;
@@ -10,8 +11,10 @@ import mk.ukim.finki.wp.exam.example.selenium.LoginPage;
 import mk.ukim.finki.wp.exam.example.service.CategoryService;
 import mk.ukim.finki.wp.exam.example.service.ProductService;
 import mk.ukim.finki.wp.exam.example.service.UserService;
+import mk.ukim.finki.wp.exam.util.CodeExtractor;
 import mk.ukim.finki.wp.exam.util.ExamAssert;
 import mk.ukim.finki.wp.exam.util.SubmissionHelper;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,8 +31,13 @@ import java.util.List;
 public class SeleniumScenarioTest {
 
     static {
-        SubmissionHelper.session = "2020-kol2";
-        SubmissionHelper.index = "201234";
+        SubmissionHelper.exam = "wp-kol-test";
+        SubmissionHelper.index = "444a";
+    }
+
+    @AfterAll
+    public static void finializeAndSubmit() throws JsonProcessingException {
+        CodeExtractor.submitSourcesAndLogs();
     }
 
 
@@ -79,18 +87,23 @@ public class SeleniumScenarioTest {
 
     @Test
     public void testServiceInit() {
+        SubmissionHelper.startTest("testServiceInit");
         ExamAssert.assertEquals("products not initialized", 10, this.productService.listAllProducts().size());
+        SubmissionHelper.endTest();
     }
 
     @Test
     public void testServiceSearch() {
+        SubmissionHelper.startTest("testServiceSearch");
         ExamAssert.assertEquals("by name and category null", 2, this.productService.listProductsByNameAndCategory("uct 1", null).size());
         ExamAssert.assertEquals("by category 1L", 10, this.productService.listProductsByNameAndCategory(null, 1L).size());
         ExamAssert.assertEquals("by name and category 1L", 2, this.productService.listProductsByNameAndCategory("uct 1", 1L).size());
+        SubmissionHelper.endTest();
     }
 
     @Test
     public void testScenarioNoSecurity() throws Exception {
+        SubmissionHelper.startTest("testScenarioNoSecurity");
         List<Category> categories = this.categoryService.listAll();
         List<Product> products = this.productService.listAllProducts();
 
@@ -126,12 +139,13 @@ public class SeleniumScenarioTest {
         productsPage.getDeleteButtons().get(itemNum).click();
         AbstractPage.assertRelativeUrl(this.driver, PRODUCTS_URL);
         productsPage.assertElemts(itemNum, itemNum, itemNum, 1);
+        SubmissionHelper.endTest();
     }
 
 
     @Test
     public void testSecurityScenario() throws Exception {
-
+        SubmissionHelper.startTest("testSecurityScenario");
         List<Category> categories = this.categoryService.listAll();
         List<Product> products = this.productService.listAllProducts();
 
@@ -178,10 +192,13 @@ public class SeleniumScenarioTest {
         LoginPage.logout(this.driver);
         AbstractPage.assertRelativeUrl(this.driver, "/");
         productsPage.assertElemts(itemNum, 0, 0, 0);
+
+        SubmissionHelper.endTest();
     }
 
     @Test
     public void testProductsFilter() throws Exception {
+        SubmissionHelper.startTest("testProductsFilter");
         List<Category> categories = this.categoryService.listAll();
         List<Product> products = this.productService.listAllProducts();
 
@@ -196,5 +213,6 @@ public class SeleniumScenarioTest {
         AbstractPage.assertRelativeUrl(this.driver, "/");
         productsPage = productsPage.filter("uct 1", "1");
         ExamAssert.assertEquals("by name and category 1L", 2, productsPage.getProductRows().size());
+        SubmissionHelper.endTest();
     }
 }

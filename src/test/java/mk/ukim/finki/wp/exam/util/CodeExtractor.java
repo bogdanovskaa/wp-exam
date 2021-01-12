@@ -1,11 +1,9 @@
 package mk.ukim.finki.wp.exam.util;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.web.client.RestTemplate;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,9 +12,7 @@ import java.util.TreeMap;
 
 public class CodeExtractor {
 
-
-    @Test
-    public void testSuccessRegister() {
+    public static void submitSourcesAndLogs() throws JsonProcessingException {
         File root = new File(".");
         System.out.println(root.getAbsolutePath());
 
@@ -36,7 +32,7 @@ public class CodeExtractor {
         SubmissionHelper.submitSource(content);
     }
 
-    public List<File> findJavaFiles(File root, String extension) {
+    public static List<File> findJavaFiles(File root, String extension) {
         List<File> javaFiles = new ArrayList<>();
         File[] files = root.listFiles();
         for (File f : files) {
@@ -49,7 +45,7 @@ public class CodeExtractor {
         return javaFiles;
     }
 
-    public Map<String, String> readFilesContent(List<File> javaFiles) {
+    public static Map<String, String> readFilesContent(List<File> javaFiles) {
         Map<String, String> fileContent = new TreeMap<>();
         for (File f : javaFiles) {
             try {
