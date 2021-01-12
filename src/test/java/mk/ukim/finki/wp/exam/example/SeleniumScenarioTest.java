@@ -23,8 +23,16 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -97,7 +105,7 @@ public class SeleniumScenarioTest {
     }
 
     @Test
-    public void test4_edit() {
+    public void test4_edit() throws Exception {
         SubmissionHelper.startTest("test-edit-20");
         List<Category> categories = this.categoryService.listAll();
         List<Product> products = this.productService.listAllProducts();
@@ -113,18 +121,34 @@ public class SeleniumScenarioTest {
         try {
             LoginPage loginPage = LoginPage.openLogin(this.driver);
             productsPage = LoginPage.doLogin(this.driver, loginPage, admin, admin);
+            productsPage = AddOrEditProduct.update(this.driver, productsPage.getEditButtons().get(itemNum - 1), "test1", "200", "4", productCategories);
+            AbstractPage.assertRelativeUrl(this.driver, PRODUCTS_URL);
+            ExamAssert.assertEquals("The updated product name is not as expected.", "test1", productsPage.getProductRows().get(itemNum - 1).findElements(By.tagName("td")).get(0).getText().trim());
+            productsPage.assertItems(itemNum);
         } catch (Exception e) {
-            productsPage = ItemsPage.to(this.driver);
+            MockHttpServletRequestBuilder productEditRequest = MockMvcRequestBuilders
+                    .post("/products/" + products.get(itemNum - 1).getId())
+                    .param("name", "test1")
+                    .param("price", "200")
+                    .param("quantity", "4");
+            for (Category c : categories) {
+                productEditRequest = productEditRequest.param("categories", c.getId().toString());
+            }
+
+            this.mockMvc.perform(productEditRequest)
+                    .andDo(MockMvcResultHandlers.print())
+                    .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+                    .andExpect(MockMvcResultMatchers.redirectedUrl(PRODUCTS_URL));
+            products = this.productService.listAllProducts();
+            ExamAssert.assertEquals("Number of items", itemNum, products.size());
+            ExamAssert.assertEquals("The updated product name is not as expected.", "test1", products.get(itemNum - 1).getName());
         }
-        productsPage = AddOrEditProduct.update(this.driver, productsPage.getEditButtons().get(itemNum - 1), "test1", "200", "4", productCategories);
-        AbstractPage.assertRelativeUrl(this.driver, PRODUCTS_URL);
-        ExamAssert.assertEquals("The updated product name is not as expected.", "test1", productsPage.getProductRows().get(itemNum).findElements(By.tagName("td")).get(0).getText().trim());
-        productsPage.assertItems(itemNum);
+
         SubmissionHelper.endTest();
     }
 
     @Test
-    public void test5_delete() {
+    public void test5_delete() throws Exception {
         SubmissionHelper.startTest("test-delete-10");
         List<Product> products = this.productService.listAllProducts();
         int itemNum = products.size();
@@ -133,18 +157,26 @@ public class SeleniumScenarioTest {
         try {
             LoginPage loginPage = LoginPage.openLogin(this.driver);
             productsPage = LoginPage.doLogin(this.driver, loginPage, admin, admin);
+            productsPage.getDeleteButtons().get(itemNum - 1).click();
+            AbstractPage.assertRelativeUrl(this.driver, PRODUCTS_URL);
+            productsPage.assertItems(itemNum - 1);
         } catch (Exception e) {
-            productsPage = ItemsPage.to(this.driver);
+            MockHttpServletRequestBuilder productDeleteRequest = MockMvcRequestBuilders
+                    .post("/products/" + products.get(itemNum - 1).getId() + "/delete");
+
+            this.mockMvc.perform(productDeleteRequest)
+                    .andDo(MockMvcResultHandlers.print())
+                    .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+                    .andExpect(MockMvcResultMatchers.redirectedUrl(PRODUCTS_URL));
+            products = this.productService.listAllProducts();
+            ExamAssert.assertEquals("Number of items", itemNum - 1, products.size());
         }
-        productsPage.getDeleteButtons().get(itemNum - 1).click();
-        AbstractPage.assertRelativeUrl(this.driver, PRODUCTS_URL);
-        productsPage.assertItems(itemNum - 1);
         SubmissionHelper.endTest();
     }
 
     @Test
     public void test6_security_urls() {
-        SubmissionHelper.startTest("test-security-20");
+        SubmissionHelper.startTest("test-security-urls-10");
         List<Product> products = this.productService.listAllProducts();
         int itemNum = products.size();
         String editUrl = "/products/" + products.get(0).getId() + "/edit";
@@ -183,6 +215,7 @@ public class SeleniumScenarioTest {
 
     @Test
     public void test7_security_buttons() {
+        SubmissionHelper.startTest("test-security-buttons-10");
         List<Product> products = this.productService.listAllProducts();
         int itemNum = products.size();
 
@@ -193,12 +226,12 @@ public class SeleniumScenarioTest {
         LoginPage loginPage = LoginPage.openLogin(this.driver);
         productsPage = LoginPage.doLogin(this.driver, loginPage, admin, admin);
         productsPage.assertButtons(itemNum, itemNum, 1);
+        SubmissionHelper.endTest();
     }
 
 
-
-
     private HtmlUnitDriver driver;
+    private MockMvc mockMvc;
 
     private static String admin = "testAdmin";
 
@@ -206,7 +239,8 @@ public class SeleniumScenarioTest {
 
 
     @BeforeEach
-    private void setup() {
+    private void setup(WebApplicationContext wac) {
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
         this.driver = new HtmlUnitDriver(true);
         initData();
     }
