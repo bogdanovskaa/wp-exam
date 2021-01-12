@@ -2,6 +2,7 @@ package mk.ukim.finki.wp.exam.example.selenium;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
 public class LoginPage extends AbstractPage {
@@ -10,6 +11,7 @@ public class LoginPage extends AbstractPage {
 
     private WebElement password;
 
+    @FindBy(css = "button[type='submit']")
     private WebElement submit;
 
     public LoginPage(WebDriver driver) {
