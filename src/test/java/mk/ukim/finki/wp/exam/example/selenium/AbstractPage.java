@@ -13,7 +13,7 @@ public class AbstractPage {
         this.driver = driver;
     }
 
-    static void get(WebDriver driver, String relativeUrl) {
+    public static void get(WebDriver driver, String relativeUrl) {
         String url = System.getProperty("geb.build.baseUrl", "http://localhost:9999") + relativeUrl;
         driver.get(url);
     }

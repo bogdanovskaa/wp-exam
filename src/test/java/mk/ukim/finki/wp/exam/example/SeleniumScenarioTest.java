@@ -32,18 +32,8 @@ public class SeleniumScenarioTest {
 
     static {
         SubmissionHelper.exam = "wp-kol-test";
-        SubmissionHelper.index = "444a";
+        SubmissionHelper.index = "TODO";
     }
-
-    @AfterAll
-    public static void finializeAndSubmit() throws JsonProcessingException {
-        CodeExtractor.submitSourcesAndLogs();
-    }
-
-
-    public static final String PRODUCTS_URL = "/products";
-    public static final String PRODUCTS_ADD_URL = "/products/add";
-    public static final String LOGIN_URL = "/login";
 
     @Autowired
     UserService userService;
@@ -55,6 +45,157 @@ public class SeleniumScenarioTest {
 
     @Autowired
     ProductService productService;
+
+
+    @Test
+    public void test1_list() {
+        SubmissionHelper.startTest("test-list-20");
+        List<Product> products = this.productService.listAllProducts();
+        int itemNum = products.size();
+
+        ItemsPage productsPage = ItemsPage.to(this.driver);
+        AbstractPage.assertRelativeUrl(this.driver, "/");
+        productsPage.assertItems(itemNum);
+
+        SubmissionHelper.endTest();
+    }
+
+    @Test
+    public void test2_filter() {
+        SubmissionHelper.startTest("test-filter-20");
+        ExamAssert.assertEquals("without filter", 10, this.productService.listProductsByNameAndCategory(null, null).size());
+        ExamAssert.assertEquals("by name only", 2, this.productService.listProductsByNameAndCategory("uct 1", null).size());
+        ExamAssert.assertEquals("by category only", 10, this.productService.listProductsByNameAndCategory(null, 1L).size());
+        ExamAssert.assertEquals("by name and category", 2, this.productService.listProductsByNameAndCategory("uct 1", 1L).size());
+        SubmissionHelper.endTest();
+    }
+
+    @Test
+    public void test3_create() {
+        SubmissionHelper.startTest("test-create-20");
+        List<Category> categories = this.categoryService.listAll();
+        List<Product> products = this.productService.listAllProducts();
+
+        int itemNum = products.size();
+
+        String[] productCategories = new String[]{
+                categories.get(0).getId().toString(),
+                categories.get(categories.size() - 1).getId().toString()
+        };
+
+        ItemsPage productsPage = null;
+        try {
+            LoginPage loginPage = LoginPage.openLogin(this.driver);
+            productsPage = LoginPage.doLogin(this.driver, loginPage, admin, admin);
+        } catch (Exception e) {
+        }
+        productsPage = AddOrEditProduct.add(this.driver, PRODUCTS_ADD_URL, "test", "100", "5", productCategories);
+        AbstractPage.assertRelativeUrl(this.driver, PRODUCTS_URL);
+        productsPage.assertItems(itemNum + 1);
+
+        SubmissionHelper.endTest();
+    }
+
+    @Test
+    public void test4_edit() {
+        SubmissionHelper.startTest("test-edit-20");
+        List<Category> categories = this.categoryService.listAll();
+        List<Product> products = this.productService.listAllProducts();
+
+        int itemNum = products.size();
+
+        String[] productCategories = new String[]{
+                categories.get(0).getId().toString(),
+                categories.get(categories.size() - 1).getId().toString()
+        };
+
+        ItemsPage productsPage = null;
+        try {
+            LoginPage loginPage = LoginPage.openLogin(this.driver);
+            productsPage = LoginPage.doLogin(this.driver, loginPage, admin, admin);
+        } catch (Exception e) {
+            productsPage = ItemsPage.to(this.driver);
+        }
+        productsPage = AddOrEditProduct.update(this.driver, productsPage.getEditButtons().get(itemNum - 1), "test1", "200", "4", productCategories);
+        AbstractPage.assertRelativeUrl(this.driver, PRODUCTS_URL);
+        ExamAssert.assertEquals("The updated product name is not as expected.", "test1", productsPage.getProductRows().get(itemNum).findElements(By.tagName("td")).get(0).getText().trim());
+        productsPage.assertItems(itemNum);
+        SubmissionHelper.endTest();
+    }
+
+    @Test
+    public void test5_delete() {
+        SubmissionHelper.startTest("test-delete-10");
+        List<Product> products = this.productService.listAllProducts();
+        int itemNum = products.size();
+
+        ItemsPage productsPage = null;
+        try {
+            LoginPage loginPage = LoginPage.openLogin(this.driver);
+            productsPage = LoginPage.doLogin(this.driver, loginPage, admin, admin);
+        } catch (Exception e) {
+            productsPage = ItemsPage.to(this.driver);
+        }
+        productsPage.getDeleteButtons().get(itemNum - 1).click();
+        AbstractPage.assertRelativeUrl(this.driver, PRODUCTS_URL);
+        productsPage.assertItems(itemNum - 1);
+        SubmissionHelper.endTest();
+    }
+
+    @Test
+    public void test6_security_urls() {
+        SubmissionHelper.startTest("test-security-20");
+        List<Product> products = this.productService.listAllProducts();
+        int itemNum = products.size();
+        String editUrl = "/products/" + products.get(0).getId() + "/edit";
+
+        ItemsPage.to(this.driver);
+        AbstractPage.assertRelativeUrl(this.driver, "/");
+
+        AbstractPage.get(this.driver, PRODUCTS_URL);
+        AbstractPage.assertRelativeUrl(this.driver, LOGIN_URL);
+        AbstractPage.get(this.driver, PRODUCTS_ADD_URL);
+        AbstractPage.assertRelativeUrl(this.driver, LOGIN_URL);
+        AbstractPage.get(this.driver, editUrl);
+        AbstractPage.assertRelativeUrl(this.driver, LOGIN_URL);
+        AbstractPage.get(this.driver, "/random");
+        AbstractPage.assertRelativeUrl(this.driver, LOGIN_URL);
+
+        LoginPage loginPage = LoginPage.openLogin(this.driver);
+        LoginPage.doLogin(this.driver, loginPage, admin, admin);
+        AbstractPage.assertRelativeUrl(this.driver, PRODUCTS_URL);
+
+
+        AbstractPage.get(this.driver, PRODUCTS_URL);
+        AbstractPage.assertRelativeUrl(this.driver, PRODUCTS_URL);
+
+        AbstractPage.get(this.driver, PRODUCTS_ADD_URL);
+        AbstractPage.assertRelativeUrl(this.driver, PRODUCTS_ADD_URL);
+
+        AbstractPage.get(this.driver, editUrl);
+        AbstractPage.assertRelativeUrl(this.driver, editUrl);
+
+        LoginPage.logout(this.driver);
+        AbstractPage.assertRelativeUrl(this.driver, "/");
+
+        SubmissionHelper.endTest();
+    }
+
+    @Test
+    public void test7_security_buttons() {
+        List<Product> products = this.productService.listAllProducts();
+        int itemNum = products.size();
+
+        ItemsPage productsPage = ItemsPage.to(this.driver);
+        AbstractPage.assertRelativeUrl(this.driver, "/");
+        productsPage.assertButtons(0, 0, 0);
+
+        LoginPage loginPage = LoginPage.openLogin(this.driver);
+        productsPage = LoginPage.doLogin(this.driver, loginPage, admin, admin);
+        productsPage.assertButtons(itemNum, itemNum, 1);
+    }
+
+
 
 
     private HtmlUnitDriver driver;
@@ -85,134 +226,14 @@ public class SeleniumScenarioTest {
         }
     }
 
-    @Test
-    public void testServiceInit() {
-        SubmissionHelper.startTest("testServiceInit");
-        ExamAssert.assertEquals("products not initialized", 10, this.productService.listAllProducts().size());
-        SubmissionHelper.endTest();
-    }
 
-    @Test
-    public void testServiceSearch() {
-        SubmissionHelper.startTest("testServiceSearch");
-        ExamAssert.assertEquals("by name and category null", 2, this.productService.listProductsByNameAndCategory("uct 1", null).size());
-        ExamAssert.assertEquals("by category 1L", 10, this.productService.listProductsByNameAndCategory(null, 1L).size());
-        ExamAssert.assertEquals("by name and category 1L", 2, this.productService.listProductsByNameAndCategory("uct 1", 1L).size());
-        SubmissionHelper.endTest();
-    }
-
-    @Test
-    public void testScenarioNoSecurity() throws Exception {
-        SubmissionHelper.startTest("testScenarioNoSecurity");
-        List<Category> categories = this.categoryService.listAll();
-        List<Product> products = this.productService.listAllProducts();
-
-        int itemNum = products.size();
-
-        String[] productCategories = new String[]{
-                categories.get(0).getId().toString(),
-                categories.get(categories.size() - 1).getId().toString()
-        };
-
-        ItemsPage productsPage = ItemsPage.to(this.driver);
-        AbstractPage.assertRelativeUrl(this.driver, "/");
-        productsPage.assertElemts(itemNum, itemNum, itemNum, 1);
-
-        productsPage = AddOrEditProduct.add(this.driver, PRODUCTS_ADD_URL, "test", "100", "5", productCategories);
-        AbstractPage.assertRelativeUrl(this.driver, PRODUCTS_URL);
-        productsPage.assertElemts(itemNum + 1, itemNum + 1, itemNum + 1, 1);
-
-        productsPage = AddOrEditProduct.add(this.driver, PRODUCTS_ADD_URL, "other test", "100", "5", productCategories);
-        AbstractPage.assertRelativeUrl(this.driver, PRODUCTS_URL);
-        productsPage.assertElemts(itemNum + 2, itemNum + 2, itemNum + 2, 1);
-
-        productsPage.getDeleteButtons().get(itemNum + 1).click();
-        AbstractPage.assertRelativeUrl(this.driver, PRODUCTS_URL);
-        productsPage.assertElemts(itemNum + 1, itemNum + 1, itemNum + 1, 1);
-
-        productsPage = AddOrEditProduct.update(this.driver, productsPage.getEditButtons().get(itemNum), "test1", "200", "4", productCategories);
-        AbstractPage.assertRelativeUrl(this.driver, PRODUCTS_URL);
-        ExamAssert.assertEquals("The updated product name is not as expected.", "test1", productsPage.getProductRows().get(itemNum).findElements(By.tagName("td")).get(0).getText().trim());
-        productsPage.assertElemts(itemNum + 1, itemNum + 1, itemNum + 1, 1);
-
-
-        productsPage.getDeleteButtons().get(itemNum).click();
-        AbstractPage.assertRelativeUrl(this.driver, PRODUCTS_URL);
-        productsPage.assertElemts(itemNum, itemNum, itemNum, 1);
-        SubmissionHelper.endTest();
+    @AfterAll
+    public static void finializeAndSubmit() throws JsonProcessingException {
+        CodeExtractor.submitSourcesAndLogs();
     }
 
 
-    @Test
-    public void testSecurityScenario() throws Exception {
-        SubmissionHelper.startTest("testSecurityScenario");
-        List<Category> categories = this.categoryService.listAll();
-        List<Product> products = this.productService.listAllProducts();
-
-        int itemNum = products.size();
-
-        String[] productCategories = new String[]{
-                categories.get(0).getId().toString(),
-                categories.get(categories.size() - 1).getId().toString()
-        };
-
-        ItemsPage productsPage = ItemsPage.to(this.driver);
-        AbstractPage.assertRelativeUrl(this.driver, "/");
-        productsPage.assertElemts(itemNum, 0, 0, 0);
-
-
-        LoginPage loginPage = LoginPage.openLogin(this.driver);
-        AbstractPage.assertRelativeUrl(this.driver, LOGIN_URL);
-
-        productsPage = LoginPage.doLogin(this.driver, loginPage, admin, admin);
-        AbstractPage.assertRelativeUrl(this.driver, PRODUCTS_URL);
-        productsPage.assertElemts(itemNum, itemNum, itemNum, 1);
-
-        productsPage = AddOrEditProduct.add(this.driver, PRODUCTS_ADD_URL, "test", "100", "5", productCategories);
-        AbstractPage.assertRelativeUrl(this.driver, PRODUCTS_URL);
-        productsPage.assertElemts(itemNum + 1, itemNum + 1, itemNum + 1, 1);
-
-        productsPage = AddOrEditProduct.add(this.driver, PRODUCTS_ADD_URL, "other test", "100", "5", productCategories);
-        AbstractPage.assertRelativeUrl(this.driver, PRODUCTS_URL);
-        productsPage.assertElemts(itemNum + 2, itemNum + 2, itemNum + 2, 1);
-
-        productsPage.getDeleteButtons().get(itemNum + 1).click();
-        AbstractPage.assertRelativeUrl(this.driver, PRODUCTS_URL);
-        productsPage.assertElemts(itemNum + 1, itemNum + 1, itemNum + 1, 1);
-
-        productsPage = AddOrEditProduct.update(this.driver, productsPage.getEditButtons().get(itemNum), "test1", "200", "4", productCategories);
-        AbstractPage.assertRelativeUrl(this.driver, PRODUCTS_URL);
-        ExamAssert.assertEquals("The updated product name is not as expected.", "test1", productsPage.getProductRows().get(itemNum).findElements(By.tagName("td")).get(0).getText().trim());
-        productsPage.assertElemts(itemNum + 1, itemNum + 1, itemNum + 1, 1);
-
-        productsPage.getDeleteButtons().get(itemNum).click();
-        AbstractPage.assertRelativeUrl(this.driver, PRODUCTS_URL);
-        productsPage.assertElemts(itemNum, itemNum, itemNum, 1);
-
-        LoginPage.logout(this.driver);
-        AbstractPage.assertRelativeUrl(this.driver, "/");
-        productsPage.assertElemts(itemNum, 0, 0, 0);
-
-        SubmissionHelper.endTest();
-    }
-
-    @Test
-    public void testProductsFilter() throws Exception {
-        SubmissionHelper.startTest("testProductsFilter");
-        List<Category> categories = this.categoryService.listAll();
-        List<Product> products = this.productService.listAllProducts();
-
-        int itemNum = products.size();
-
-        String[] productCategories = new String[]{
-                categories.get(0).getId().toString(),
-                categories.get(categories.size() - 1).getId().toString()
-        };
-
-        ItemsPage productsPage = ItemsPage.to(this.driver);
-        AbstractPage.assertRelativeUrl(this.driver, "/");
-        productsPage = productsPage.filter("uct 1", "1");
-        ExamAssert.assertEquals("by name and category 1L", 2, productsPage.getProductRows().size());
-        SubmissionHelper.endTest();
-    }
+    public static final String PRODUCTS_URL = "/products";
+    public static final String PRODUCTS_ADD_URL = "/products/add";
+    public static final String LOGIN_URL = "/login";
 }

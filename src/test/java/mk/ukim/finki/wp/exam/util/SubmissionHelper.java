@@ -31,7 +31,7 @@ public class SubmissionHelper {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        headers.set("X-Forwarded-For", "10.20.20.31");
+//        headers.set("X-Forwarded-For", "10.20.20.31");
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
         map.add("examName", exam);
         map.add("index", index);

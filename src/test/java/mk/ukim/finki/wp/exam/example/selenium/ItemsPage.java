@@ -55,10 +55,13 @@ public class ItemsPage extends AbstractPage {
         return PageFactory.initElements(driver, ItemsPage.class);
     }
 
-    public void assertElemts(int productsNumber, int deleteButtons, int editButtons, int addButtons) {
-        ExamAssert.assertEquals("Item's rows do not match", productsNumber, this.getProductRows().size());
-        ExamAssert.assertEquals("Delete do not match", deleteButtons, this.getDeleteButtons().size());
-        ExamAssert.assertEquals("Edit do not match", editButtons, this.getEditButtons().size());
-        ExamAssert.assertEquals("Add is visible", addButtons, this.getAddProductButton().size());
+    public void assertButtons(int deleteButtonsCount, int editButtonsCount, int addButtonsCount) {
+        ExamAssert.assertEquals("delete btn count", deleteButtonsCount, this.getDeleteButtons().size());
+        ExamAssert.assertEquals("edit btn count", editButtonsCount, this.getEditButtons().size());
+        ExamAssert.assertEquals("add btn count", addButtonsCount, this.getAddProductButton().size());
+    }
+
+    public void assertItems(int expectedItemsNumber) {
+        ExamAssert.assertEquals("Number of items", expectedItemsNumber, this.getProductRows().size());
     }
 }
