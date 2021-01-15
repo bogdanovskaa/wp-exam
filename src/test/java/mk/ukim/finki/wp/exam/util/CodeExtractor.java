@@ -2,9 +2,9 @@ package mk.ukim.finki.wp.exam.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -49,12 +49,22 @@ public class CodeExtractor {
         Map<String, String> fileContent = new TreeMap<>();
         for (File f : javaFiles) {
             try {
-                String content = Files.readString(f.toPath());
+                String content = readString(f.getAbsolutePath());
                 fileContent.put(f.getAbsolutePath(), content);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
         return fileContent;
+    }
+
+    private static String readString(String path) throws IOException {
+        StringBuilder builder = new StringBuilder();
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(path), "UTF-8"))) {
+            String line = null;
+            while ((line = br.readLine()) != null)
+                builder.append(line).append("\n");
+        }
+        return builder.toString();
     }
 }

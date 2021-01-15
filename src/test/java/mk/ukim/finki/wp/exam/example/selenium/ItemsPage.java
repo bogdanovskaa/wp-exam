@@ -1,6 +1,5 @@
 package mk.ukim.finki.wp.exam.example.selenium;
 
-import lombok.Getter;
 import mk.ukim.finki.wp.exam.util.ExamAssert;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -10,7 +9,7 @@ import org.openqa.selenium.support.ui.Select;
 
 import java.util.List;
 
-@Getter
+
 public class ItemsPage extends AbstractPage {
 
     private WebElement nameSearch;
@@ -63,5 +62,33 @@ public class ItemsPage extends AbstractPage {
 
     public void assertItems(int expectedItemsNumber) {
         ExamAssert.assertEquals("Number of items", expectedItemsNumber, this.getProductRows().size());
+    }
+
+    public WebElement getNameSearch() {
+        return nameSearch;
+    }
+
+    public WebElement getCategoryId() {
+        return categoryId;
+    }
+
+    public WebElement getFilter() {
+        return filter;
+    }
+
+    public List<WebElement> getProductRows() {
+        return productRows;
+    }
+
+    public List<WebElement> getDeleteButtons() {
+        return deleteButtons;
+    }
+
+    public List<WebElement> getEditButtons() {
+        return editButtons;
+    }
+
+    public List<WebElement> getAddProductButton() {
+        return addProductButton;
     }
 }

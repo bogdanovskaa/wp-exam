@@ -1,10 +1,8 @@
 package mk.ukim.finki.wp.exam.example.selenium;
 
-import lombok.Getter;
 import mk.ukim.finki.wp.exam.util.ExamAssert;
 import org.openqa.selenium.WebDriver;
 
-@Getter
 public class AbstractPage {
 
     protected WebDriver driver;
@@ -30,4 +28,7 @@ public class AbstractPage {
         ExamAssert.assertEquals("Current url is not " + url, url, current);
     }
 
+    public WebDriver getDriver() {
+        return driver;
+    }
 }

@@ -32,7 +32,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -40,7 +39,7 @@ public class SeleniumScenarioTest {
 
     static {
         SubmissionHelper.exam = "wp-kol-test";
-        SubmissionHelper.index = "TODO";
+        SubmissionHelper.index = "index";
     }
 
     @Autowired
