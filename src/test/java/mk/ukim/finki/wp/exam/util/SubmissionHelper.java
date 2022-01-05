@@ -38,7 +38,7 @@ public class SubmissionHelper {
         map.add("solution", solution);
         map.add("log", logString);
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
-        ResponseEntity<String> response = restTemplate.postForEntity("http://wp.finki.ukim.mk/submit", request, String.class);
+        ResponseEntity<String> response = restTemplate.postForEntity("http://env4health.finki.ukim.mk/submit", request, String.class);
 
 
         System.err.println("SUCCESS SUBMIT");

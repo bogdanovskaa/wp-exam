@@ -38,8 +38,8 @@ import java.util.List;
 public class SeleniumScenarioTest {
 
     static {
-        SubmissionHelper.exam = "wp-kol-test";
-        SubmissionHelper.index = "index";
+        SubmissionHelper.exam = "wp-lab-test-2022";
+        SubmissionHelper.index = "enter-your-index-here";
     }
 
     @Autowired
